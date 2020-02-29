@@ -2,15 +2,8 @@
 
 namespace Exolnet\Bento;
 
-use Exolnet\Bento\Strategy\Strategy;
-
 class Bento
 {
-    /**
-     * @var \Exolnet\Bento\StrategyFactory
-     */
-    protected $factory;
-
     /**
      * @var array
      */
@@ -22,35 +15,16 @@ class Bento
     protected $visitorId;
 
     /**
-     * @param \Exolnet\Bento\StrategyFactory $factory
-     */
-    public function __construct(StrategyFactory $factory)
-    {
-        $this->factory = $factory;
-    }
-
-    /**
      * @param string $name
      * @return \Exolnet\Bento\Feature
      */
     public function feature(string $name): Feature
     {
         if (! isset($this->features[$name])) {
-            $this->features[$name] = new Feature($this, $name);
+            $this->features[$name] = new Feature($name);
         }
 
         return $this->features[$name];
-    }
-
-    /**
-     * @param string $name
-     * @param string $strategy
-     * @param array ...$options
-     * @return \Exolnet\Bento\Feature
-     */
-    public function aim(string $name, string $strategy, ...$options): Feature
-    {
-        return $this->feature($name)->aim($strategy, ...$options);
     }
 
     /**
@@ -68,7 +42,7 @@ class Bento
      */
     public function await(string $name): bool
     {
-        return ! $this->launch($name);
+        return $this->feature($name)->await();
     }
 
     /**
@@ -102,29 +76,5 @@ class Bento
         $request = request();
 
         return crc32($request->ip() . $request->header('user-agent'));
-    }
-
-    /**
-     * @param \Exolnet\Bento\Feature $feature
-     * @param string $name
-     * @param array ...$options
-     * @return \Exolnet\Bento\Strategy\Strategy
-     * @throws \ReflectionException
-     */
-    public function makeStrategy(Feature $feature, string $name, ...$options)
-    {
-        return $this->factory->make($feature, $name, ...$options);
-    }
-
-    /**
-     * @param string $name
-     * @param callable $callback
-     * @return $this
-     */
-    public function defineStrategy(string $name, callable $callback): self
-    {
-        $this->factory->register($name, $callback);
-
-        return $this;
     }
 }

@@ -3,14 +3,14 @@
 namespace Exolnet\Bento\Tests\Unit\Middleware;
 
 use Exolnet\Bento\Bento;
-use Exolnet\Bento\Middleware\Launch;
+use Exolnet\Bento\Middleware\Await;
 use Exolnet\Bento\Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Mockery as m;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class LaunchTest extends TestCase
+class AwaitTest extends TestCase
 {
     /**
      * @var \Exolnet\Bento\Bento|\Mockery\MockInterface
@@ -37,7 +37,7 @@ class LaunchTest extends TestCase
         $this->bento = m::mock(Bento::class);
         $this->request = m::mock(Request::class);
 
-        $this->middleware = new Launch($this->bento);
+        $this->middleware = new Await($this->bento);
     }
 
     /**
@@ -45,7 +45,7 @@ class LaunchTest extends TestCase
      */
     public function testFeatureLaunched(): void
     {
-        $this->bento->shouldReceive('launch')->once()->with('feature')->andReturn(true);
+        $this->bento->shouldReceive('await')->once()->with('feature')->andReturn(true);
 
         $responseExpected = m::mock(Response::class);
 
@@ -66,7 +66,7 @@ class LaunchTest extends TestCase
      */
     public function testFeatureNotLaunched(): void
     {
-        $this->bento->shouldReceive('launch')->once()->with('feature')->andReturn(false);
+        $this->bento->shouldReceive('await')->once()->with('feature')->andReturn(false);
 
         $next = function () {
             // The next method should not be called

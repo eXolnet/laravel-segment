@@ -3,9 +3,9 @@
 namespace Exolnet\Bento\Tests\Unit\Strategy;
 
 use Exolnet\Bento\Strategy\Everyone;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\Tests\TestCase;
 
-class EveryoneTest extends UnitTest
+class EveryoneTest extends TestCase
 {
     /**
      * @return void

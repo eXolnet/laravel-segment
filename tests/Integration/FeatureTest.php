@@ -2,11 +2,12 @@
 
 namespace Exolnet\Bento\Tests\Integration;
 
+use BadMethodCallException;
 use Exolnet\Bento\Facades\Bento;
 use Exolnet\Bento\Feature;
-use Exolnet\Bento\Tests\IntegrationTest;
+use Exolnet\Bento\Tests\TestCase;
 
-class FeatureCreationTest extends IntegrationTest
+class FeatureTest extends TestCase
 {
     /**
      * @var \Exolnet\Bento\Bento
@@ -38,7 +39,7 @@ class FeatureCreationTest extends IntegrationTest
      */
     public function testFeatureAimFluent(): void
     {
-        $feature = $this->bento->feature('name')->aim('visitor-percent', 10);
+        $feature = $this->bento->feature('name')->visitorPercent(10);
 
         $this->assertInstanceOf(Feature::class, $feature);
         $this->assertCount(1, $feature->getStrategies());
@@ -49,7 +50,7 @@ class FeatureCreationTest extends IntegrationTest
      */
     public function testFeatureAim(): void
     {
-        $feature = $this->bento->aim('name', 'visitor-percent', 10);
+        $feature = $this->bento->feature('name')->visitorPercent(10);
 
         $this->assertInstanceOf(Feature::class, $feature);
         $this->assertCount(1, $feature->getStrategies());
@@ -63,5 +64,15 @@ class FeatureCreationTest extends IntegrationTest
         $launch = $this->bento->launch('name');
 
         $this->assertFalse($launch);
+    }
+
+    /**
+     * @return void
+     */
+    public function testInvalidAim(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+
+        $this->bento->feature('name')->invalid();
     }
 }

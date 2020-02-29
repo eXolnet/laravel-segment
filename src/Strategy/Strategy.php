@@ -2,10 +2,10 @@
 
 namespace Exolnet\Bento\Strategy;
 
-abstract class Strategy
+interface Strategy
 {
     /**
      * @return bool
      */
-    abstract public function launch(): bool;
+    public function __invoke(): bool;
 }

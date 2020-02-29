@@ -5,7 +5,7 @@ namespace Exolnet\Bento\Strategy;
 use Exolnet\Bento\Bento;
 use Exolnet\Bento\Feature;
 
-class VisitorPercent extends Percent
+class VisitorPercent extends StrategyPercent
 {
     /**
      * @var \Exolnet\Bento\Bento

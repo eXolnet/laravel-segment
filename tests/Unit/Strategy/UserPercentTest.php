@@ -4,11 +4,11 @@ namespace Exolnet\Bento\Tests\Unit\Strategy;
 
 use Exolnet\Bento\Feature;
 use Exolnet\Bento\Strategy\UserPercent;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\Tests\TestCase;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Mockery as m;
 
-class UserPercentTest extends UnitTest
+class UserPercentTest extends TestCase
 {
     /**
      * @var \Illuminate\Contracts\Auth\Factory|\Mockery\MockInterface

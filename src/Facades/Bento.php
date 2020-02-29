@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @see \Exolnet\Bento\Bento
+ *
+ * @method \Exolnet\Bento\Feature feature(string $name)
+ * @method bool launch(string $name)
+ * @method bool await(string $name)
+ * @method int getVisitorId()
+ * @method void setVisitorId(int $visitorId)
  */
 class Bento extends Facade
 {

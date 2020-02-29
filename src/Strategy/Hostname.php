@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use Illuminate\Http\Request;
 
-class Hostname extends Strategy
+class Hostname extends StrategyBase
 {
     /**
      * @var \Illuminate\Http\Request
@@ -29,7 +29,7 @@ class Hostname extends Strategy
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         $host = $this->request->getHost();
 

@@ -12,14 +12,15 @@ class Feature extends LogicAnd
     protected $name;
 
     /**
-     * @param \Exolnet\Bento\Bento $bento
      * @param callable|null $name
      */
-    public function __construct(Bento $bento, $name)
+    public function __construct($name)
     {
-        parent::__construct($bento, $this);
-
         $this->name = $name;
+
+        parent::__construct($this, function () {
+            // For a feature, strategies won't be added though a callback
+        });
     }
 
     /**
@@ -33,12 +34,12 @@ class Feature extends LogicAnd
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         if (! $this->hasStrategies()) {
             return false;
         }
 
-        return parent::launch();
+        return parent::__invoke();
     }
 }

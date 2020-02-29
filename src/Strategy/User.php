@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use Illuminate\Contracts\Auth\Factory as Auth;
 
-class User extends Strategy
+class User extends StrategyBase
 {
     /**
      * @var \Illuminate\Contracts\Auth\Factory
@@ -30,17 +30,9 @@ class User extends Strategy
     }
 
     /**
-     * @return array|null
-     */
-    public function getUserIds(): ?array
-    {
-        return $this->userIds;
-    }
-
-    /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         if (! $userId = $this->auth->guard()->id()) {
             return false;

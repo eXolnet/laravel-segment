@@ -2,16 +2,15 @@
 
 namespace Exolnet\Bento\Strategy;
 
-class LogicOr extends Logic
+class LogicOr extends StrategyLogic
 {
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
-        /** @var \Exolnet\Bento\Strategy\Strategy $strategy */
-        foreach ($this->strategies as $strategy) {
-            if ($strategy->launch()) {
+        foreach ($this->getStrategies() as $strategy) {
+            if ($strategy()) {
                 return true;
             }
         }

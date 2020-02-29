@@ -5,10 +5,11 @@ namespace Exolnet\Bento\Tests\Unit;
 use Exolnet\Bento\Bento;
 use Exolnet\Bento\Feature;
 use Exolnet\Bento\Strategy\Stub;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\StrategyFactory;
+use Exolnet\Bento\Tests\TestCase;
 use Mockery as m;
 
-class FeatureTest extends UnitTest
+class FeatureTest extends TestCase
 {
     /**
      * @var \Mockery\MockInterface|\Exolnet\Bento\Bento
@@ -25,8 +26,10 @@ class FeatureTest extends UnitTest
      */
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->bento = m::mock(Bento::class);
-        $this->feature = new Feature($this->bento, 'name');
+        $this->feature = new Feature('name');
     }
 
     /**
@@ -60,11 +63,14 @@ class FeatureTest extends UnitTest
      */
     public function testFeatureAimIsFluent(): void
     {
-        $this->bento->shouldReceive('makeStrategy')->with($this->feature, 'everyone');
+        $factory = m::mock(StrategyFactory::class);
+        $this->instance(StrategyFactory::class, $factory);
 
-        $actual = $this->feature->aim('everyone');
+        $factory->shouldReceive('make')->with($this->feature, 'everyone')->andReturn(new Stub(true));
 
-        $this->assertSame($actual, $this->feature);
+        $actual = $this->feature->everyone();
+
+        $this->assertSame($this->feature, $actual);
     }
 
     /**
@@ -72,10 +78,13 @@ class FeatureTest extends UnitTest
      */
     public function testAddStrategiesToFeature(): void
     {
-        $stub = new Stub(true);
+        $factory = m::mock(StrategyFactory::class);
+        $this->instance(StrategyFactory::class, $factory);
 
-        $this->bento->shouldReceive('makeStrategy')->with($this->feature, 'nobody')->andReturn($stub);
-        $this->feature->aim('nobody');
+        $stub = new Stub(false);
+        $factory->shouldReceive('make')->with($this->feature, 'nobody')->andReturn($stub);
+
+        $this->feature->nobody();
 
         $strategies = $this->feature->getStrategies();
 
@@ -93,7 +102,10 @@ class FeatureTest extends UnitTest
     {
         $stub = new Stub(true);
 
-        $this->bento->shouldReceive('makeStrategy')->with($this->feature, 'visitorPercent', 10)->andReturn($stub);
+        $factory = m::mock(StrategyFactory::class);
+        $this->instance(StrategyFactory::class, $factory);
+
+        $factory->shouldReceive('make')->with($this->feature, 'visitorPercent', 10)->andReturn($stub);
 
         $this->feature->visitorPercent(10);
 

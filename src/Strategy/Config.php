@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use \Illuminate\Contracts\Config\Repository as ConfigRepository;
 
-class Config extends Strategy
+class Config extends StrategyBase
 {
     /**
      * @var \Illuminate\Contracts\Config\Repository
@@ -29,7 +29,7 @@ class Config extends Strategy
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         return (bool)$this->config->get($this->key);
     }

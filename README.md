@@ -37,16 +37,41 @@ And the facade to the ``facades`` array in `config/app.php`:
 
 ### Create Features
 
-Define features and their launch segmentation strategies. You can define one strategy with the `aim` method:
+Define features and their launch segmentation strategies. You can define a feature with the `feature` method:
 
 ```
-Bento::aim('feature', 'visitor-percent', 10);
+Bento::feature('feature')->visitorPercent(10);
 ```
 
 Or you can combine multiple strategies:
 
 ```
-Bento::feature('feature')->aim('visitor-percent', 10)->aim('hostname', 'example.com');
+Bento::feature('feature')
+    ->visitorPercent(10)
+    ->hostname('example.com');
+```
+
+Your features could be grouped in the `boot` method of a service provider:
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Exolnet\Bento\Facades\Bento;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * @return void
+     */
+    public function boot()
+    {
+        Bento::feature('foo')->everyone();
+        Bento::feature('bar')->everyone();
+    }
+}
 ```
 
 ### Launch Your Features
@@ -89,22 +114,29 @@ In Blade templates, handy macros are also available:
 
 #### Middleware
 
-Since some strategy requires the request context to be evaluated, it's recommended to use the `Feature` middleware to limit a route:
+Since some strategy requires the request context to be evaluated, it's recommended to use middleware to limit a route:
 
-1. Add the `Feature` middleware in the `$routeMiddleware` of your application's HTTP Kernel:
+1. Add the following middleware in the `$routeMiddleware` of your application's HTTP Kernel:
 
 ```
     protected $routeMiddleware = [
         // ...
+        'await' => \Exolnet\Bento\Middleware\Await::class,
         'launch' => \Exolnet\Bento\Middleware\Launch::class,
         // ...
     ];
 ```
 
-2. Then, you could use it to restrict your routes:
+2. Then, you could use them to restrict your routes:
 
 ```
 Route::middleware('launch:feature')->group(function () {
+    //
+});
+```
+
+```
+Route::middleware('await:feature')->group(function () {
     //
 });
 ```
@@ -113,12 +145,15 @@ Route::middleware('launch:feature')->group(function () {
 
 The following segmentation strategies are available to help quickly target your users:
 
+* Callback
+* Config
 * Date
 * Environment
 * Everyone
 * Guest
 * Hostname 
 * Nobody
+* Stub
 * User (authenticated or specific user IDs)
 * User Percent (a fraction of all connected visitors)
 * Visitor Percent (a fraction of all your visitors)
@@ -129,54 +164,65 @@ Additional logic segmentation strategies are available to help target your users
 
 #### Logic Not
 
-```
-Bento::aim('feature', 'logic-not', 'everybody');
+```php
+use \Exolnet\Bento\Strategy\Builder;
+
+Bento::feature('feature')
+    ->logicNot(function(Builder $aim) {
+        $aim->everyone();
+    });
 ```
 
 #### Logic And
 
-```
-Bento::aim('feature', 'logic-and', function($feature) {
-    $feature
-        ->aim('environment', 'production')
-        ->aim('visitor-percent', 20);
+```php
+use \Exolnet\Bento\Strategy\Builder;
+
+Bento::feature('feature')
+    ->logicAnd(function(Builder $aim) {
+        $aim
+            ->environment('production')
+            ->visitorPercent(20);
+    });
 });
 ```
 
 #### Logic Or
 
-```
-Bento::aim('feature', 'logic-or', function($feature) {
-    $feature
-        ->aim('environment', 'staging')
-        ->aim('user', [1, 2]);
+```php
+use \Exolnet\Bento\Strategy\Builder;
+
+Bento::feature('feature')
+    ->logicOr(function(Builder $aim) {
+        $aim
+            ->environment(['local', 'staging'])
+            ->user([1, 2]);
+    });
 });
 ```
 
 ### Custom Segmentation Strategies
 
-You can create your own custom strategies.
+You can create your own custom strategies:
 
-You can also inject dependencies the same way [Laravel Controllers' method injection](https://laravel.com/docs/5.4/controllers#dependency-injection-and-controllers) works. A common use-case for method injection is injecting the `Illuminate\Contracts\Auth\Guard` instance into your strategy to target users by property:
+```php
+use \Exolnet\Bento\Strategy\Strategy;
 
+Bento::feature('feature')
+    ->aim(new class implements Strategy {
+        /**
+         * @return bool
+         */
+        public function __invoke(): bool
+        {
+            return true;
+        }
+    });
 ```
-use Illuminate\Contracts\Auth\Guard;
-
-Bento::defineStrategy('role', function(Guard $guard, $role) {
-    return $guard->user() && $guard->user()->role === $role;
-});
-```
-
-Then, you can use your custom strategy like the default one:
-
-```
-Bento::feature('feature')->aim('role', 'admin');
-```
-
 
 ## Testing
 
-To run the phpUnit tests, please use:
+To run the PHPUnit tests, please use:
 
 ``` bash
 $ composer test

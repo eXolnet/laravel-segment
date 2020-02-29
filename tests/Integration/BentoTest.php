@@ -3,9 +3,9 @@
 namespace Exolnet\Bento\Tests\Integration;
 
 use Exolnet\Bento\Bento;
-use Exolnet\Bento\Tests\IntegrationTest;
+use Exolnet\Bento\Tests\TestCase;
 
-class BentoTest extends IntegrationTest
+class BentoTest extends TestCase
 {
     /**
      * @return void

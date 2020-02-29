@@ -3,9 +3,9 @@
 namespace Exolnet\Bento\Tests\Unit\Strategy;
 
 use Exolnet\Bento\Strategy\Stub;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\Tests\TestCase;
 
-class StubTest extends UnitTest
+class StubTest extends TestCase
 {
     /**
      * @return void

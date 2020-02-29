@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
-class Environment extends Strategy
+class Environment extends StrategyBase
 {
     /**
      * @var \Illuminate\Contracts\Config\Repository
@@ -29,7 +29,7 @@ class Environment extends Strategy
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         $environment = $this->config->get('app.env');
 

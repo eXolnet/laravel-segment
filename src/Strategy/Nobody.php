@@ -2,12 +2,12 @@
 
 namespace Exolnet\Bento\Strategy;
 
-class Nobody extends Strategy
+class Nobody extends StrategyBase
 {
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         return false;
     }

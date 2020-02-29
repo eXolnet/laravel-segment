@@ -3,18 +3,19 @@
 namespace Exolnet\Bento\Tests\Unit;
 
 use Exolnet\Bento\Feature;
-use Exolnet\Bento\Strategy\Custom;
+use Exolnet\Bento\Strategy\Callback;
 use Exolnet\Bento\Strategy\Everyone;
 use Exolnet\Bento\Strategy\Stub;
 use Exolnet\Bento\Strategy\User;
 use Exolnet\Bento\Strategy\UserPercent;
 use Exolnet\Bento\StrategyFactory;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\Tests\TestCase;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use InvalidArgumentException;
 use Mockery as m;
 
-class StrategyFactoryTest extends UnitTest
+class StrategyFactoryTest extends TestCase
 {
     /**
      * @var \Mockery\MockInterface|\Exolnet\Bento\Feature
@@ -44,7 +45,7 @@ class StrategyFactoryTest extends UnitTest
     /**
      * @return void
      */
-    public function testMakeClassStrategy(): void
+    public function testMakeStrategy(): void
     {
         $strategy = $this->factory->make($this->feature, 'everyone');
 
@@ -54,19 +55,29 @@ class StrategyFactoryTest extends UnitTest
     /**
      * @return void
      */
-    public function testMakeClassStrategyWithOptions(): void
+    public function testMakeInvalidStrategy(): void
     {
-        /** @var \Exolnet\Bento\Strategy\Stub $strategy */
-        $strategy = $this->factory->make($this->feature, 'stub', true);
+        $this->expectException(InvalidArgumentException::class);
 
-        $this->assertInstanceOf(Stub::class, $strategy);
-        $this->assertTrue($strategy->getState());
+        $this->factory->make($this->feature, 'invalid');
     }
 
     /**
      * @return void
      */
-    public function testMakeClassWithDependencyInjection(): void
+    public function testMakeStrategyWithOptions(): void
+    {
+        /** @var \Exolnet\Bento\Strategy\Stub $strategy */
+        $strategy = $this->factory->make($this->feature, 'stub', true);
+
+        $this->assertInstanceOf(Stub::class, $strategy);
+        $this->assertTrue($strategy->launch());
+    }
+
+    /**
+     * @return void
+     */
+    public function testMakeWithDependencyInjection(): void
     {
         $auth = m::mock(Auth::class);
 
@@ -76,13 +87,12 @@ class StrategyFactoryTest extends UnitTest
         $strategy = $this->factory->make($this->feature, 'user', [42]);
 
         $this->assertInstanceOf(User::class, $strategy);
-        $this->assertEquals([42], $strategy->getUserIds());
     }
 
     /**
      * @return void
      */
-    public function testMakeClassWithFeatureAware(): void
+    public function testMakeWithFeatureAware(): void
     {
         $auth = m::mock(Auth::class);
 
@@ -93,77 +103,5 @@ class StrategyFactoryTest extends UnitTest
 
         $this->assertInstanceOf(UserPercent::class, $strategy);
         $this->assertSame($this->feature, $strategy->getFeature());
-    }
-
-    /**
-     * @return void
-     */
-    public function testMakeCustomStrategy(): void
-    {
-        $this->factory->register('custom', function () {
-            return true;
-        });
-
-        /** @var \Exolnet\Bento\Strategy\Custom $strategy */
-        $strategy = $this->factory->make($this->feature, 'custom');
-
-        $this->assertInstanceOf(Custom::class, $strategy);
-        $this->assertEquals(0, count($strategy->getOptions()));
-    }
-
-    /**
-     * @return void
-     */
-    public function testMakeCustomStrategyWithOptions(): void
-    {
-        $this->factory->register('custom', function ($customParameter) {
-            return true;
-        });
-
-        /** @var \Exolnet\Bento\Strategy\Custom $strategy */
-        $strategy = $this->factory->make($this->feature, 'custom', 42);
-
-        $this->assertInstanceOf(Custom::class, $strategy);
-        $this->assertEquals(1, count($strategy->getOptions()));
-    }
-
-    /**
-     * @return void
-     */
-    public function testMakeCustomWithDependencyInjection(): void
-    {
-        $auth = m::mock(Auth::class);
-
-        $this->container->shouldReceive('make')->with(Auth::class)->andReturn($auth);
-
-        $this->factory->register('custom', function (Auth $auth, $customParameter) {
-            return true;
-        });
-
-        /** @var \Exolnet\Bento\Strategy\Custom $strategy */
-        $strategy = $this->factory->make($this->feature, 'custom', 42);
-
-        $this->assertInstanceOf(Custom::class, $strategy);
-        $this->assertEquals(2, count($strategy->getOptions()));
-    }
-
-    /**
-     * @return void
-     */
-    public function testMakeCustomWithFeatureAware(): void
-    {
-        $auth = m::mock(Auth::class);
-
-        $this->container->shouldReceive('make')->with(Auth::class)->andReturn($auth);
-
-        $this->factory->register('custom', function (Auth $auth, Feature $feature, $customParameter) {
-            return true;
-        });
-
-        /** @var \Exolnet\Bento\Strategy\Custom $strategy */
-        $strategy = $this->factory->make($this->feature, 'custom', 42);
-
-        $this->assertInstanceOf(Custom::class, $strategy);
-        $this->assertEquals(3, count($strategy->getOptions()));
     }
 }

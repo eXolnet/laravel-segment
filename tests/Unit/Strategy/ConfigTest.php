@@ -3,11 +3,12 @@
 namespace Exolnet\Bento\Tests\Unit\Strategy;
 
 use Exolnet\Bento\Strategy\Config;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\Tests\TestCase;
+use Generator;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Mockery as m;
 
-class ConfigTest extends UnitTest
+class ConfigTest extends TestCase
 {
     /**
      * @var \Illuminate\Contracts\Config\Repository|\Mockery\MockInterface
@@ -28,25 +29,23 @@ class ConfigTest extends UnitTest
      * @return void
      * @dataProvider provideTestLaunch
      */
-    public function testLaunch($expected): void
+    public function testLaunch($expectedLaunch): void
     {
         $strategy = new Config($this->config, 'feature.key');
 
-        $this->config->shouldReceive('get')->with('feature.key')->once()->andReturn($expected);
+        $this->config->shouldReceive('get')->with('feature.key')->once()->andReturn($expectedLaunch);
 
         $actual = $strategy->launch();
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expectedLaunch, $actual);
     }
 
     /**
-     * @return array
+     * @return \Generator
      */
-    public function provideTestLaunch(): array
+    public function provideTestLaunch(): Generator
     {
-        return [
-            [true],
-            [false],
-        ];
+        yield [true];
+        yield [false];
     }
 }

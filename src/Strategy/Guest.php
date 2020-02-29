@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use Illuminate\Contracts\Auth\Factory as Auth;
 
-class Guest extends Strategy
+class Guest extends StrategyBase
 {
     /**
      * @var \Illuminate\Contracts\Auth\Factory
@@ -22,7 +22,7 @@ class Guest extends Strategy
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         return $this->auth->guard()->guest();
     }

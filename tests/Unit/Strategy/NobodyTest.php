@@ -3,9 +3,9 @@
 namespace Exolnet\Bento\Tests\Unit\Strategy;
 
 use Exolnet\Bento\Strategy\Nobody;
-use Exolnet\Bento\Tests\UnitTest;
+use Exolnet\Bento\Tests\TestCase;
 
-class NobodyTest extends UnitTest
+class NobodyTest extends TestCase
 {
     /**
      * @return void

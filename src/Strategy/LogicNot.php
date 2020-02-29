@@ -2,52 +2,13 @@
 
 namespace Exolnet\Bento\Strategy;
 
-use Exolnet\Bento\Bento;
-use Exolnet\Bento\Feature;
-
-class LogicNot extends Strategy implements FeatureAware
+class LogicNot extends LogicAnd
 {
-    /**
-     * @var \Exolnet\Bento\Bento
-     */
-    protected $bento;
-
-    /**
-     * @var \Exolnet\Bento\Feature
-     */
-    protected $feature;
-
-    /**
-     * @var \Exolnet\Bento\Strategy\Strategy
-     */
-    protected $strategy;
-
-    /**
-     * @param \Exolnet\Bento\Bento $bento
-     * @param \Exolnet\Bento\Feature $feature
-     * @param string $name
-     * @param array ...$options
-     */
-    public function __construct(Bento $bento, Feature $feature, $name, ...$options)
-    {
-        $this->bento = $bento;
-        $this->feature = $feature;
-        $this->strategy = $this->bento->makeStrategy($this->feature, $name, ...$options);
-    }
-
-    /**
-     * @return \Exolnet\Bento\Feature
-     */
-    public function getFeature(): Feature
-    {
-        return $this->feature;
-    }
-
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
-        return ! $this->strategy->launch();
+        return ! parent::__invoke();
     }
 }

@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use Exolnet\Bento\Feature;
 
-abstract class Percent extends Strategy implements FeatureAware
+abstract class StrategyPercent extends StrategyBase implements StrategyFeatureAware
 {
     /**
      * @var int
@@ -50,18 +50,18 @@ abstract class Percent extends Strategy implements FeatureAware
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         if (! $uniqueId = $this->getUniqueId()) {
             return false;
         }
 
-        $uniqueNumber = crc32($this->feature->getName() .'|'. $uniqueId);
+        $uniqueNumber = crc32($this->getFeature()->getName() .'|'. $uniqueId);
 
         // Limit the unique ID between 1 and 100.
         $percentile = $uniqueNumber % 100 + 1;
 
         // Based on the calculated percentile, we identify if the user has access to the feature.
-        return $percentile <= $this->percent;
+        return $percentile <= $this->getPercent();
     }
 }

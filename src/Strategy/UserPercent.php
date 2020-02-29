@@ -5,7 +5,7 @@ namespace Exolnet\Bento\Strategy;
 use Exolnet\Bento\Feature;
 use Illuminate\Contracts\Auth\Factory as Auth;
 
-class UserPercent extends Percent
+class UserPercent extends StrategyPercent
 {
     /**
      * @var \Illuminate\Contracts\Auth\Factory

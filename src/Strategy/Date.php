@@ -3,16 +3,17 @@
 namespace Exolnet\Bento\Strategy;
 
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
-class Date extends Strategy
+class Date extends StrategyBase
 {
     /**
-     * @var \Carbon\Carbon
+     * @var \Illuminate\Support\Carbon
      */
     protected static $now;
 
     /**
-     * @var \Carbon\Carbon
+     * @var \Illuminate\Support\Carbon
      */
     protected $date;
 
@@ -22,7 +23,7 @@ class Date extends Strategy
     protected $operator;
 
     /**
-     * @param string|int $date
+     * @param \DateTime|string|int $date
      * @param string $operator
      */
     public function __construct($date, string $operator = '>=')
@@ -34,32 +35,34 @@ class Date extends Strategy
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         $now = static::getNow();
 
         if ($this->operator === '<') {
-            return $now->startOfDay()->gt($this->date);
+            return $now->gt($this->date);
         } elseif ($this->operator === '<=') {
-            return $now->startOfDay()->gte($this->date);
+            return $now->gte($this->date);
         } elseif ($this->operator === '>=') {
-            return $now->endOfDay()->lte($this->date);
+            return $now->lte($this->date);
         } elseif ($this->operator === '>') {
-            return $now->endOfDay()->lt($this->date);
+            return $now->lt($this->date);
         } elseif ($this->operator === '=') {
-            return $now->endOfDay()->isSameDay($this->date);
+            return $now->isSameDay($this->date);
         }
 
-        return false;
+        throw new InvalidArgumentException(
+            'Invalid '. $this->operator .' operator for strategy '. static::class
+        );
     }
 
     /**
-     * @return \Carbon\Carbon
+     * @return \Illuminate\Support\Carbon
      */
     protected static function getNow(): Carbon
     {
         if (! static::$now) {
-            static::$now = Carbon::now();
+            static::$now = Carbon::now()->startOfDay();
         }
 
         return static::$now;

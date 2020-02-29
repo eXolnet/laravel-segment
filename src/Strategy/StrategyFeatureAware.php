@@ -4,7 +4,7 @@ namespace Exolnet\Bento\Strategy;
 
 use Exolnet\Bento\Feature;
 
-interface FeatureAware
+interface StrategyFeatureAware extends Strategy
 {
     /**
      * @return \Exolnet\Bento\Feature

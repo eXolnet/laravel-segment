@@ -2,7 +2,7 @@
 
 namespace Exolnet\Bento\Strategy;
 
-class Stub extends Strategy
+class Stub extends StrategyBase
 {
     /**
      * @var bool
@@ -20,15 +20,7 @@ class Stub extends Strategy
     /**
      * @return bool
      */
-    public function getState(): bool
-    {
-        return $this->state;
-    }
-
-    /**
-     * @return bool
-     */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         return $this->state;
     }

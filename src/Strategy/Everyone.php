@@ -2,12 +2,12 @@
 
 namespace Exolnet\Bento\Strategy;
 
-class Everyone extends Strategy
+class Everyone extends StrategyBase
 {
     /**
      * @return bool
      */
-    public function launch(): bool
+    public function __invoke(): bool
     {
         return true;
     }

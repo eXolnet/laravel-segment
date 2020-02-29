@@ -3,9 +3,9 @@
 namespace Exolnet\Bento\Tests;
 
 use Exolnet\Bento\BentoServiceProvider;
-use Orchestra\Testbench\TestCase;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
-abstract class IntegrationTest extends TestCase
+abstract class TestCase extends BaseTestCase
 {
     /**
      * Get the service providers for the package.
